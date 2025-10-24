@@ -10,38 +10,24 @@
 <div class="container">
   <h1>SaeMinh Note</h1>
 
-  <!-- AUTH SECTION -->
-  <div id="auth-section">
-    <h2>Register / Login</h2>
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
-    <button class="clickable" onclick="registerUser()">Register</button>
-    <button class="clickable" onclick="loginUser()">Login</button>
-  </div>
-
   <!-- NOTE SECTION -->
-  <div id="note-section" style="display:none;">
-    <h2>Welcome, <span id="current-user"></span></h2>
-
+  <div id="note-section">
     <input type="text" id="note-name" placeholder="Enter note name">
     <textarea id="note-text" placeholder="Write your note here..."></textarea>
 
     <div class="note-options">
       <label><input type="checkbox" id="is-public"> Public</label>
-      <button class="clickable" onclick="saveNote()">Save Note</button>
+      <button class="clickable" id="save-btn">Save Note</button>
     </div>
 
     <h3>Your Notes</h3>
     <ul id="note-list"></ul>
-  </div>
 
-  <!-- PUBLIC NOTES -->
-  <div id="public-section">
-    <h2>Public Notes</h2>
+    <h3>Public Notes</h3>
     <ul id="public-list"></ul>
   </div>
-</div>
 
+</div>
 <script src="main.js"></script>
 </body>
 </html>
