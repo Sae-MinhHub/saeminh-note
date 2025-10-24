@@ -1,78 +1,41 @@
-body {
-  font-family: "Inter", sans-serif;
-  background: #0f1724;
-  color: #e6eef8;
-  display: flex;
-  justify-content: center;
-  padding: 30px;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaeMinh Note</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>SaeMinh Note</h1>
 
-.container {
-  width: 90%;
-  max-width: 800px;
-}
+    <div id="auth-section">
+      <h2>Register / Login</h2>
+      <input type="text" id="username" placeholder="Username">
+      <input type="password" id="password" placeholder="Password">
+      <button onclick="registerUser()">Register</button>
+      <button onclick="loginUser()">Login</button>
+      <p id="auth-msg"></p>
+    </div>
 
-h1 {
-  color: #60a5fa;
-  text-align: center;
-  margin-bottom: 20px;
-}
+    <div id="note-section" style="display:none;">
+      <h2>Welcome, <span id="current-user"></span></h2>
 
-input, textarea, button {
-  display: block;
-  width: 100%;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  border: 2px solid #3b82f6;
-  padding: 10px;
-  font-size: 16px;
-  outline: none;
-}
+      <textarea id="note-text" placeholder="Write your note here..."></textarea>
 
-textarea {
-  height: 200px;
-  resize: vertical;
-  background: #1e293b;
-  color: #e2e8f0;
-}
+      <div class="note-options">
+        <label>
+          <input type="checkbox" id="is-public"> Public
+        </label>
+        <button onclick="saveNote()">Save Note</button>
+      </div>
 
-button {
-  background: #3b82f6;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
-}
+      <h3>Your Notes</h3>
+      <ul id="note-list"></ul>
+    </div>
+  </div>
 
-button:hover {
-  background: #2563eb;
-  transform: translateY(-2px);
-}
-
-.note-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-li {
-  background: #1e293b;
-  margin-bottom: 5px;
-  padding: 8px;
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.note-btn {
-  margin-left: 5px;
-  padding: 4px 8px;
-  font-size: 14px;
-}
+<script src="main.js"></script>
+</body>
+</html>
