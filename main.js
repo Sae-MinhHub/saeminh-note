@@ -25,7 +25,7 @@ function createBtn(text, fn) { const b=document.createElement("button"); b.textC
 // ===== SAVE NOTE =====
 function saveNote(editID=null, fileName=null){
   const name = fileName || noteName.value.trim();
-  const content = noteText.value.replace(/^\s+|\s+$/g,''); // loại bỏ mọi khoảng trắng đầu/cuối
+  const content = noteText.value.replace(/^[\s\r\n]+|[\s\r\n]+$/g,'');
   const pub = isPublic.checked;
   if(!name||!content) return alert("Fill all fields!");
 
@@ -50,7 +50,7 @@ uploadFile.onchange = function(e){
   if(!file) return;
   const reader = new FileReader();
   reader.onload = function(evt){
-    noteText.value = evt.target.result.replace(/^\s+|\s+$/g,''); // loại bỏ khoảng trắng đầu/cuối
+    noteText.value = evt.target.result.replace(/^[\s\r\n]+|[\s\r\n]+$/g,'');
     saveNote(null, file.name);
     uploadFile.value = "";
   };
