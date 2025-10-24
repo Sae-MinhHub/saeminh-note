@@ -6,7 +6,7 @@
 <style>
 html, body { margin:0; padding:0; height:100%; }
 body { background:white; color:black; font-family: monospace; white-space: pre-wrap; }
-pre { margin:0; padding:10px; }
+pre { margin:0; padding:0; }
 </style>
 </head>
 <body>
@@ -15,7 +15,7 @@ pre { margin:0; padding:10px; }
 let notes = JSON.parse(localStorage.getItem("notes")||"[]");
 let id = location.hash.substring(1);
 let note = notes.find(n=>n.id===id);
-document.getElementById("raw-content").textContent = note ? note.content : "Note not found!";
+document.getElementById("raw-content").textContent = note ? note.content.trim() : "Note not found!";
 </script>
 </body>
 </html>
