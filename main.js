@@ -10,7 +10,14 @@ const saveBtn = document.getElementById("save-btn");
 let notes = JSON.parse(localStorage.getItem("notes") || "[]");
 
 // ===== UTILS =====
-function genID() { return Math.random().toString(36).substring(2,8).toUpperCase(); }
+function genUniqueID() {
+  let id;
+  do {
+    id = Date.now().toString(36) + Math.random().toString(36).substring(2,5).toUpperCase();
+  } while (notes.some(n => n.id === id));
+  return id;
+}
+
 function saveAll() { localStorage.setItem("notes", JSON.stringify(notes)); }
 function createBtn(text, fn) { const b=document.createElement("button"); b.textContent=text; b.className="note-btn"; b.onclick=fn; return b; }
 
@@ -25,10 +32,10 @@ function saveNote(editID=null){
     const note = notes.find(n=>n.id===editID);
     note.name = name; note.content = content; note.public = pub;
   } else {
-    const id = genID();
+    const id = genUniqueID();
     notes.push({id,name,content,public:pub});
     const link = `${location.origin}${location.pathname}#${id}`;
-    alert(`Note saved! Your link: ${link}`);
+    alert(`Note saved! Raw link: ${link}`);
   }
   noteName.value=""; noteText.value=""; isPublic.checked=false;
   saveAll(); renderNotes(); renderPublicNotes();
@@ -66,18 +73,28 @@ function renderPublicNotes(){
 
 // ===== OPEN / EDIT / DELETE =====
 function openNoteByID(id){
-  const note = notes.find(n=>n.id===id && (n.public || true));
+  const note = notes.find(n=>n.id===id);
   if(!note) return alert("Note not found.");
   const win = window.open("","_blank");
-  win.document.write(`<pre>${note.content}</pre>`);
+  win.document.write(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <title>${note.name}</title>
+      <style>
+        body { font-family: monospace; background:#f0f8ff; color:#0f1724; padding:20px; white-space: pre-wrap; }
+      </style>
+    </head>
+    <body>
+      ${note.content}
+    </body>
+    </html>
+  `);
+  win.document.close();
 }
 
-function openRawNote(id){
-  const note = notes.find(n=>n.id===id && (n.public || true));
-  if(!note) return alert("Note not found.");
-  const win = window.open("","_blank");
-  win.document.write(`<pre id="raw-content">${note.content}</pre>`);
-}
+function openRawNote(id){ openNoteByID(id); }
 
 function editNote(id){
   const note = notes.find(n=>n.id===id);
