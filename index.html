@@ -1,38 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sae Minh Note</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SaeMinh Note</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <h1>Sae Minh Note</h1>
-</header>
-
-<main>
-  <section class="create-note">
-    <input type="text" id="note-name" placeholder="Enter note title...">
-    <textarea id="note-text" placeholder="Write your note here..."></textarea>
-    <div class="options">
-      <label><input type="checkbox" id="is-public"> Public</label>
-      <button id="save-btn" class="btn">Save Note</button>
-      <input type="file" id="upload-file" class="btn" />
-    </div>
-  </section>
-
-  <section class="notes-section">
-    <h2>Your Notes</h2>
-    <ul id="note-list" class="note-list"></ul>
-  </section>
-
-  <section class="notes-section">
-    <h2>Public Notes</h2>
-    <ul id="public-list" class="note-list"></ul>
-  </section>
-</main>
-
-<script src="main.js"></script>
+  <h1>SaeMinh Note</h1>
+  <textarea id="noteArea" placeholder="Nhập ghi chú của bạn..."></textarea>
+  <br>
+  <button id="saveBtn">Lưu</button>
+  <button id="loadBtn">Tải lại</button>
+  <script src="main.js"></script>
 </body>
 </html>
