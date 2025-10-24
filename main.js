@@ -83,11 +83,18 @@ function openNoteByID(id){
       <meta charset="UTF-8">
       <title>${note.name}</title>
       <style>
-        body { font-family: monospace; background:#f0f8ff; color:#0f1724; padding:20px; white-space: pre-wrap; }
+        body {
+          background:#fefefe;
+          color:#000;
+          font-family: monospace;
+          padding:20px;
+          white-space: pre-wrap;
+        }
+        pre { font-family: monospace; white-space: pre-wrap; }
       </style>
     </head>
     <body>
-      ${note.content}
+      <pre>${note.content}</pre>
     </body>
     </html>
   `);
