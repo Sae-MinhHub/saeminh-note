@@ -27,7 +27,8 @@ function saveNote(editID=null){
   } else {
     const id = genID();
     notes.push({id,name,content,public:pub});
-    alert(`Note saved! Link: ${location.origin}${location.pathname}#${id}`);
+    const link = `${location.origin}${location.pathname}#${id}`;
+    alert(`Note saved! Your link: ${link}`);
   }
   noteName.value=""; noteText.value=""; isPublic.checked=false;
   saveAll(); renderNotes(); renderPublicNotes();
@@ -45,7 +46,8 @@ function renderNotes(){
     const btnEdit = createBtn("Edit", ()=>editNote(note.id));
     const btnDel = createBtn("Delete", ()=>deleteNote(note.id));
     const btnCopy = createBtn("Copy", ()=>navigator.clipboard.writeText(note.content));
-    li.append(btnView, btnCopy, btnEdit, btnDel);
+    const btnRaw = createBtn("Raw", ()=>openRawNote(note.id));
+    li.append(btnView, btnCopy, btnRaw, btnEdit, btnDel);
     noteList.appendChild(li);
   });
 }
@@ -56,7 +58,8 @@ function renderPublicNotes(){
     const li=document.createElement("li");
     li.innerHTML=`<b>${note.name}</b>`;
     const btnView = createBtn("View", ()=>openNoteByID(note.id));
-    li.appendChild(btnView);
+    const btnRaw = createBtn("Raw", ()=>openRawNote(note.id));
+    li.appendChild(btnView); li.appendChild(btnRaw);
     publicList.appendChild(li);
   });
 }
@@ -67,6 +70,13 @@ function openNoteByID(id){
   if(!note) return alert("Note not found.");
   const win = window.open("","_blank");
   win.document.write(`<pre>${note.content}</pre>`);
+}
+
+function openRawNote(id){
+  const note = notes.find(n=>n.id===id && (n.public || true));
+  if(!note) return alert("Note not found.");
+  const win = window.open("","_blank");
+  win.document.write(`<pre id="raw-content">${note.content}</pre>`);
 }
 
 function editNote(id){
@@ -93,4 +103,4 @@ checkHashNote();
 renderNotes();
 renderPublicNotes();
 
-} // window.onload end
+}
