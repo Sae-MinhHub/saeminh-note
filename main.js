@@ -1,158 +1,158 @@
 let currentUser = null;
 
-// ----- Users -----
+// ===== USER SYSTEM =====
 function getUsers() {
   return JSON.parse(localStorage.getItem("users") || "{}");
 }
 function saveUsers(users) {
   localStorage.setItem("users", JSON.stringify(users));
 }
-
-// ----- Session -----
+function setSession(user) {
+  localStorage.setItem("currentUser", user);
+}
 function getSession() {
   return localStorage.getItem("currentUser");
 }
-function setSession(username) {
-  localStorage.setItem("currentUser", username);
-}
 
-// ----- Register / Login -----
+// ===== REGISTER / LOGIN =====
 function registerUser() {
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const msg = document.getElementById("auth-msg");
-
-  if (!username || !password) { msg.textContent = "Please enter username and password."; return; }
+  const u = username.value.trim();
+  const p = password.value.trim();
+  if (!u || !p) return alert("Please enter username and password.");
 
   let users = getUsers();
-  if (users[username]) { msg.textContent = "Username already exists."; return; }
+  if (users[u]) return alert("Username already exists!");
 
-  users[username] = { password: btoa(password), notes: [] };
+  users[u] = { password: btoa(p), notes: [] };
   saveUsers(users);
-  msg.textContent = "Registered successfully. You can login now.";
+  alert("Registered! Please login now.");
 }
 
 function loginUser() {
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const msg = document.getElementById("auth-msg");
-
+  const u = username.value.trim();
+  const p = password.value.trim();
   let users = getUsers();
-  if (!users[username] || atob(users[username].password) !== password) {
-    msg.textContent = "Invalid username or password."; return;
+
+  if (!users[u] || atob(users[u].password) !== p) {
+    alert("Invalid username or password!");
+    return;
   }
 
-  currentUser = username;
-  setSession(currentUser);
+  currentUser = u;
+  setSession(u);
   showNoteSection();
 }
 
-// Show note section
+// ===== AUTO LOGIN =====
+window.onload = () => {
+  const u = getSession();
+  if (u && getUsers()[u]) {
+    currentUser = u;
+    showNoteSection();
+  } else renderPublicNotes();
+};
+
+// ===== INTERFACE =====
 function showNoteSection() {
-  document.getElementById("auth-section").style.display = "none";
-  document.getElementById("note-section").style.display = "block";
-  document.getElementById("current-user").textContent = currentUser;
+  auth-section.style.display = "none";
+  note-section.style.display = "block";
+  current-user.textContent = currentUser;
   renderNotes();
+  renderPublicNotes();
 }
 
-// ----- Generate ID -----
+// ===== NOTE SYSTEM =====
 function genID() {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  return Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+  return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
-// ----- Save note -----
 function saveNote() {
-  const noteName = document.getElementById("note-name").value.trim();
-  const noteText = document.getElementById("note-text").value.trim();
-  const isPublic = document.getElementById("is-public").checked;
+  const name = note-name.value.trim();
+  const content = note-text.value.trim();
+  const isPublic = is-public.checked;
 
-  if (!noteName) { alert("Please enter note name."); return; }
-  if (!noteText) { alert("Note content cannot be empty."); return; }
+  if (!name || !content) return alert("Fill all fields!");
 
   let users = getUsers();
-  const noteID = genID();
-  const note = { id: noteID, name: noteName, content: noteText, public: isPublic, hidden: !isPublic, created: new Date().toISOString() };
+  const note = {
+    id: genID(),
+    name,
+    content,
+    public: isPublic,
+    owner: currentUser,
+    created: new Date().toISOString()
+  };
 
   users[currentUser].notes.push(note);
   saveUsers(users);
-
-  document.getElementById("note-name").value = "";
-  document.getElementById("note-text").value = "";
-  document.getElementById("is-public").checked = false;
+  note-name.value = "";
+  note-text.value = "";
+  is-public.checked = false;
 
   renderNotes();
+  renderPublicNotes();
 }
 
-// ----- Render notes -----
+// ===== RENDER NOTES =====
 function renderNotes() {
   const ul = document.getElementById("note-list");
   ul.innerHTML = "";
-  const users = getUsers();
-  const notes = users[currentUser].notes;
+  let notes = getUsers()[currentUser].notes;
 
   notes.forEach(note => {
     const li = document.createElement("li");
-    const text = document.createElement("span");
-    text.textContent = `${note.name}: ${note.content.length>50?note.content.slice(0,50)+"...":note.content}`;
-    li.appendChild(text);
+    li.innerHTML = `<span><b>${note.name}</b> ${note.public ? "(Public)" : "(Private)"}</span>`;
 
-    const btnCopy = document.createElement("button");
-    btnCopy.textContent = "Copy"; btnCopy.className="note-btn";
-    btnCopy.onclick = () => navigator.clipboard.writeText(note.content);
+    const btnRaw = createBtn("RAW", () => openNote(note));
+    const btnCopy = createBtn("Copy", () => navigator.clipboard.writeText(note.content));
+    const btnDel = createBtn("Delete", () => deleteNote(note.id));
 
-    const btnRAW = document.createElement("button");
-    btnRAW.textContent = "RAW"; btnRAW.className="note-btn";
-    btnRAW.onclick = () => {
-      const blob = new Blob([note.content], {type: "text/plain"});
-      const url = URL.createObjectURL(blob);
-      window.open(url, "_blank");
-    };
-
-    const btnDownload = document.createElement("button");
-    btnDownload.textContent = "Download"; btnDownload.className="note-btn";
-    btnDownload.onclick = () => {
-      const filename = note.hidden ? `${currentUser}_${note.name}_${note.id}.hidden.txt` : `${currentUser}_${note.name}_${note.id}.txt`;
-      const blob = new Blob([note.content], {type:"text/plain"});
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = filename;
-      link.click();
-    };
-
-    const btnEdit = document.createElement("button");
-    btnEdit.textContent = "Edit"; btnEdit.className="note-btn";
-    btnEdit.onclick = () => {
-      document.getElementById("note-name").value = note.name;
-      document.getElementById("note-text").value = note.content;
-      document.getElementById("is-public").checked = note.public;
-    };
-
-    const btnDelete = document.createElement("button");
-    btnDelete.textContent = "Delete"; btnDelete.className="note-btn";
-    btnDelete.onclick = () => {
-      if(confirm("Delete this note permanently?")) {
-        const index = users[currentUser].notes.findIndex(n=>n.id===note.id);
-        if(index>-1) users[currentUser].notes.splice(index,1);
-        saveUsers(users);
-        renderNotes();
-      }
-    };
-
-    li.appendChild(btnCopy);
-    li.appendChild(btnRAW);
-    li.appendChild(btnDownload);
-    li.appendChild(btnEdit);
-    li.appendChild(btnDelete);
+    li.append(btnRaw, btnCopy, btnDel);
     ul.appendChild(li);
   });
 }
 
-// ----- Auto login -----
-window.onload = () => {
-  const sessionUser = getSession();
-  if(sessionUser && getUsers()[sessionUser]) {
-    currentUser = sessionUser;
-    showNoteSection();
+// ===== PUBLIC NOTES =====
+function renderPublicNotes() {
+  const ul = document.getElementById("public-list");
+  ul.innerHTML = "";
+  let users = getUsers();
+  Object.keys(users).forEach(u => {
+    users[u].notes
+      .filter(n => n.public)
+      .forEach(note => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span><b>${note.name}</b> by ${u}</span>`;
+        const btn = createBtn("View", () => openNote(note));
+        ul.appendChild(li);
+        li.appendChild(btn);
+      });
+  });
+}
+
+// ===== UTILS =====
+function createBtn(text, fn) {
+  const b = document.createElement("button");
+  b.textContent = text;
+  b.className = "note-btn";
+  b.onclick = fn;
+  return b;
+}
+
+function openNote(note) {
+  if (!note.public && note.owner !== currentUser) {
+    alert("This note is private.");
+    return;
   }
-};
+  const blob = new Blob([note.content], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  window.open(url, "_blank");
+}
+
+function deleteNote(id) {
+  let users = getUsers();
+  let notes = users[currentUser].notes;
+  users[currentUser].notes = notes.filter(n => n.id !== id);
+  saveUsers(users);
+  renderNotes();
+}
