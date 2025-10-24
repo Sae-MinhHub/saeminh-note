@@ -26,17 +26,19 @@
     <textarea id="note-text" placeholder="Write your note here..."></textarea>
 
     <div class="note-options">
-      <label>
-        <input type="checkbox" id="is-public"> Public
-      </label>
+      <label><input type="checkbox" id="is-public"> Public</label>
       <button class="clickable" onclick="saveNote()">Save Note</button>
     </div>
 
     <h3>Your Notes</h3>
     <ul id="note-list"></ul>
   </div>
-</div>
 
+  <div id="public-section">
+    <h2>Public Notes</h2>
+    <ul id="public-list"></ul>
+  </div>
+</div>
 <script src="main.js"></script>
 </body>
 </html>
