@@ -1,3 +1,5 @@
+window.onload = function(){
+
 // ===== GET HTML ELEMENTS =====
 const username = document.getElementById("username");
 const password = document.getElementById("password");
@@ -19,7 +21,7 @@ function setSession(user) { localStorage.setItem("currentUser", user); }
 function getSession() { return localStorage.getItem("currentUser"); }
 
 // ===== REGISTER / LOGIN =====
-function registerUser() {
+window.registerUser = function() {
   const u = username.value.trim();
   const p = password.value.trim();
   if(!u || !p) return alert("Enter username and password.");
@@ -30,7 +32,7 @@ function registerUser() {
   alert("Registered! Please login.");
 }
 
-function loginUser() {
+window.loginUser = function() {
   const u = username.value.trim();
   const p = password.value.trim();
   let users = getUsers();
@@ -41,11 +43,9 @@ function loginUser() {
 }
 
 // ===== AUTO LOGIN =====
-window.onload = () => {
-  const u = getSession();
-  if(u && getUsers()[u]) { currentUser = u; showNoteSection(); }
-  checkHashNote();
-};
+const u = getSession();
+if(u && getUsers()[u]) { currentUser = u; showNoteSection(); }
+checkHashNote();
 
 // ===== INTERFACE =====
 function showNoteSection() {
@@ -59,7 +59,7 @@ function showNoteSection() {
 // ===== NOTE SYSTEM =====
 function genID() { return Math.random().toString(36).substring(2,8).toUpperCase(); }
 
-function saveNote(editID=null) {
+window.saveNote = function(editID=null) {
   const name = noteName.value.trim();
   const content = noteText.value.trim();
   const pub = isPublic.checked;
@@ -67,7 +67,6 @@ function saveNote(editID=null) {
   let users = getUsers();
 
   if(editID){
-    // Edit mode
     let note = users[currentUser].notes.find(n=>n.id===editID);
     if(!note) return alert("Cannot edit note.");
     note.name = name;
@@ -76,7 +75,6 @@ function saveNote(editID=null) {
     saveUsers(users);
     alert("Note updated!");
   } else {
-    // New note
     const id = genID();
     const note = {id,name,content,public:pub,owner:currentUser,created:new Date().toISOString()};
     users[currentUser].notes.push(note);
@@ -158,7 +156,6 @@ function editNote(id){
   noteName.value = note.name;
   noteText.value = note.content;
   isPublic.checked = note.public;
-  // Override save button temporarily
   const saveBtn = document.querySelector(".note-options button.clickable");
   saveBtn.onclick = ()=>{ saveNote(id); saveBtn.onclick=()=>saveNote(); };
 }
@@ -169,3 +166,5 @@ function checkHashNote(){
   if(!id) return;
   openNoteByID(id);
 }
+
+} // window.onload end
