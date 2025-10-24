@@ -92,9 +92,12 @@ function saveNote() {
 
   users[currentUser].notes.push(note);
   saveUsers(users);
+
+  // Reset input
   document.getElementById("note-name").value = "";
   document.getElementById("note-text").value = "";
   document.getElementById("is-public").checked = false;
+
   renderNotes();
 }
 
