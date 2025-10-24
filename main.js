@@ -6,6 +6,7 @@ const isPublic = document.getElementById("is-public");
 const noteList = document.getElementById("note-list");
 const publicList = document.getElementById("public-list");
 const saveBtn = document.getElementById("save-btn");
+const uploadFile = document.getElementById("upload-file");
 
 let notes = JSON.parse(localStorage.getItem("notes") || "[]");
 
@@ -22,8 +23,8 @@ function saveAll() { localStorage.setItem("notes", JSON.stringify(notes)); }
 function createBtn(text, fn) { const b=document.createElement("button"); b.textContent=text; b.className="note-btn"; b.onclick=fn; return b; }
 
 // ===== SAVE NOTE =====
-function saveNote(editID=null){
-  const name = noteName.value.trim();
+function saveNote(editID=null, fileName=null){
+  const name = fileName || noteName.value.trim();
   const content = noteText.value.trim();
   const pub = isPublic.checked;
   if(!name||!content) return alert("Fill all fields!");
@@ -35,13 +36,26 @@ function saveNote(editID=null){
     const id = genUniqueID();
     notes.push({id,name,content,public:pub});
     const link = `${location.origin}${location.pathname}#${id}`;
-    alert(`Note saved! View: ${link} | Raw: ${location.origin}${location.pathname}raw.html#${id}`);
+    alert(`Note saved!\nView: ${link}\nRaw: ${location.origin}${location.pathname}raw.html#${id}`);
   }
   noteName.value=""; noteText.value=""; isPublic.checked=false;
   saveAll(); renderNotes(); renderPublicNotes();
 }
 
 saveBtn.onclick = ()=>saveNote();
+
+// ===== UPLOAD FILE =====
+uploadFile.onchange = function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt){
+    noteText.value = evt.target.result;
+    saveNote(null, file.name);
+    uploadFile.value = "";
+  };
+  reader.readAsText(file);
+};
 
 // ===== RENDER =====
 function renderNotes(){
