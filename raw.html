@@ -15,7 +15,7 @@ pre { margin:0; padding:0; }
 let notes = JSON.parse(localStorage.getItem("notes")||"[]");
 let id = location.hash.substring(1);
 let note = notes.find(n=>n.id===id);
-document.getElementById("raw-content").textContent = note ? note.content.trim() : "Note not found!";
+document.getElementById("raw-content").textContent = note ? note.content.replace(/^\s+|\s+$/g,'') : "Note not found!";
 </script>
 </body>
 </html>
