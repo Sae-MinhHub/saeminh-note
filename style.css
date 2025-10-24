@@ -13,14 +13,8 @@ body {
   text-align: center;
 }
 
-h1 {
-  color: #60a5fa;
-  margin-bottom: 20px;
-}
-
-h2, h3 {
-  margin-bottom: 15px;
-}
+h1 { color: #60a5fa; margin-bottom: 20px; }
+h2, h3 { margin-bottom: 15px; }
 
 input, textarea {
   display: block;
@@ -35,10 +29,7 @@ input, textarea {
   outline: none;
 }
 
-textarea {
-  height: 180px;
-  resize: vertical;
-}
+textarea { height: 180px; resize: vertical; }
 
 button.clickable {
   background: #3b82f6;
@@ -51,27 +42,12 @@ button.clickable {
   transition: 0.2s;
 }
 
-button.clickable:hover {
-  background: #2563eb;
-  transform: translateY(-2px);
-}
+button.clickable:hover { background: #2563eb; transform: translateY(-2px); }
+button.clickable:active { transform: translateY(1px); }
 
-button.clickable:active {
-  transform: translateY(1px);
-}
+.note-options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
 
-.note-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-  text-align: left;
-}
+ul { list-style: none; padding: 0; text-align: left; }
 
 li {
   background: #1e293b;
@@ -96,7 +72,4 @@ li {
   transition: 0.2s;
 }
 
-.note-btn:hover {
-  background: #2563eb;
-  transform: translateY(-1px);
-}
+.note-btn:hover { background: #2563eb; transform: translateY(-1px); }
