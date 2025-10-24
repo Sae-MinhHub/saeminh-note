@@ -35,7 +35,7 @@ function saveNote(editID=null){
     const id = genUniqueID();
     notes.push({id,name,content,public:pub});
     const link = `${location.origin}${location.pathname}#${id}`;
-    alert(`Note saved! Raw link: ${link}`);
+    alert(`Note saved! View: ${link} | Raw: ${location.origin}${location.pathname}raw.html#${id}`);
   }
   noteName.value=""; noteText.value=""; isPublic.checked=false;
   saveAll(); renderNotes(); renderPublicNotes();
@@ -75,33 +75,16 @@ function renderPublicNotes(){
 function openNoteByID(id){
   const note = notes.find(n=>n.id===id);
   if(!note) return alert("Note not found.");
-  const win = window.open("","_blank");
-  win.document.write(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <title>${note.name}</title>
-      <style>
-        body {
-          background:#fefefe;
-          color:#000;
-          font-family: monospace;
-          padding:20px;
-          white-space: pre-wrap;
-        }
-        pre { font-family: monospace; white-space: pre-wrap; }
-      </style>
-    </head>
-    <body>
-      <pre>${note.content}</pre>
-    </body>
-    </html>
-  `);
-  win.document.close();
+  const win = window.open(`${location.origin}${location.pathname}#${id}`,"_blank");
+  win.focus();
 }
 
-function openRawNote(id){ openNoteByID(id); }
+function openRawNote(id){
+  const note = notes.find(n=>n.id===id);
+  if(!note) return alert("Note not found.");
+  const rawWin = window.open(`${location.origin}${location.pathname}raw.html#${id}`,"_blank");
+  rawWin.focus();
+}
 
 function editNote(id){
   const note = notes.find(n=>n.id===id);
@@ -120,11 +103,11 @@ function deleteNote(id){
 function checkHashNote(){
   const id = location.hash.substring(1);
   if(!id) return;
-  openNoteByID(id);
+  const note = notes.find(n=>n.id===id);
+  if(note) alert("Open note from hash! (Use raw.html for raw view)");
 }
 
 checkHashNote();
 renderNotes();
 renderPublicNotes();
-
 }
