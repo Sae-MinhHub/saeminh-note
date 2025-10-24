@@ -35,7 +35,7 @@ main { max-width: 900px; margin: 20px auto; padding: 0 10px; }
 
 .create-note textarea { height: 150px; resize: vertical; }
 
-.options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.options { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 20px; }
 
 .btn {
   padding: 10px 20px;
