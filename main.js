@@ -1,98 +1,180 @@
-body {
-  font-family: "Inter", sans-serif;
-  background: #0f1724;
-  color: #e6eef8;
-  display: flex;
-  justify-content: center;
-  padding: 30px;
+let currentUser = null;
+
+// ----- Users -----
+function getUsers() {
+  return JSON.parse(localStorage.getItem("users") || "{}");
 }
 
-.container {
-  width: 90%;
-  max-width: 800px;
-  text-align: center;
+function saveUsers(users) {
+  localStorage.setItem("users", JSON.stringify(users));
 }
 
-h1 {
-  color: #60a5fa;
-  margin-bottom: 20px;
+// ----- Session -----
+function getSession() {
+  return localStorage.getItem("currentUser");
 }
 
-input, textarea, button {
-  display: block;
-  width: 100%;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  border: 2px solid #3b82f6;
-  padding: 10px;
-  font-size: 16px;
-  outline: none;
-  transition: 0.2s;
+function setSession(username) {
+  localStorage.setItem("currentUser", username);
 }
 
-textarea {
-  height: 200px;
-  resize: vertical;
-  background: #1e293b;
-  color: #e2e8f0;
+function clearSession() {
+  localStorage.removeItem("currentUser");
 }
 
-button.clickable {
-  background: #3b82f6;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
+// ----- Register / Login -----
+function registerUser() {
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const msg = document.getElementById("auth-msg");
+
+  if (!username || !password) {
+    msg.textContent = "Please enter username and password.";
+    return;
+  }
+
+  let users = getUsers();
+  if (users[username]) {
+    msg.textContent = "Username already exists.";
+    return;
+  }
+
+  users[username] = { password: btoa(password), notes: [] };
+  saveUsers(users);
+  msg.textContent = "Registered successfully. You can login now.";
 }
 
-button.clickable:hover {
-  background: #2563eb;
-  transform: translateY(-2px);
+function loginUser() {
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const msg = document.getElementById("auth-msg");
+
+  let users = getUsers();
+  if (!users[username] || atob(users[username].password) !== password) {
+    msg.textContent = "Invalid username or password.";
+    return;
+  }
+
+  currentUser = username;
+  setSession(currentUser);
+  showNoteSection();
 }
 
-button.clickable:active {
-  transform: translateY(1px);
+// Show note section
+function showNoteSection() {
+  document.getElementById("auth-section").style.display = "none";
+  document.getElementById("note-section").style.display = "block";
+  document.getElementById("current-user").textContent = currentUser;
+  renderNotes();
 }
 
-.note-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
+// ----- Generate ID -----
+function genID() {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  return Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
 }
 
-ul {
-  list-style: none;
-  padding: 0;
-  text-align: left;
+// ----- Save note -----
+function saveNote() {
+  const noteText = document.getElementById("note-text").value.trim();
+  const isPublic = document.getElementById("is-public").checked;
+  if (!noteText) return alert("Note cannot be empty.");
+
+  let users = getUsers();
+  const noteID = genID();
+  const note = {
+    id: noteID,
+    content: noteText,
+    public: isPublic,
+    hidden: !isPublic,
+    created: new Date().toISOString()
+  };
+
+  users[currentUser].notes.push(note);
+  saveUsers(users);
+  document.getElementById("note-text").value = "";
+  document.getElementById("is-public").checked = false;
+  renderNotes();
 }
 
-li {
-  background: #1e293b;
-  margin-bottom: 5px;
-  padding: 8px;
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+// ----- Render notes -----
+function renderNotes() {
+  const ul = document.getElementById("note-list");
+  ul.innerHTML = "";
+  const users = getUsers();
+  const notes = users[currentUser].notes;
+
+  notes.forEach(note => {
+    const li = document.createElement("li");
+    const text = document.createElement("span");
+    text.textContent = note.content.length > 50 ? note.content.slice(0,50)+"..." : note.content;
+    li.appendChild(text);
+
+    // Buttons
+    const btnCopy = document.createElement("button");
+    btnCopy.textContent = "Copy";
+    btnCopy.className = "note-btn";
+    btnCopy.onclick = () => navigator.clipboard.writeText(note.content);
+
+    const btnRAW = document.createElement("button");
+    btnRAW.textContent = "RAW";
+    btnRAW.className = "note-btn";
+    btnRAW.onclick = () => {
+      if (note.public) {
+        const rawLink = `https://raw.githubusercontent.com/Sae-MinhHub/saeminh-note/main/raw/${currentUser}/${note.id}.txt`;
+        window.open(rawLink, "_blank");
+      } else {
+        const rawWin = window.open("", "_blank");
+        rawWin.document.write("<pre>" + note.content.replace(/[&<>]/g, t => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[t])) + "</pre>");
+      }
+    };
+
+    const btnDownload = document.createElement("button");
+    btnDownload.textContent = "Download";
+    btnDownload.className = "note-btn";
+    btnDownload.onclick = () => {
+      const filename = note.hidden ? `${currentUser}_${note.id}.hidden.txt` : `${currentUser}_${note.id}.txt`;
+      const blob = new Blob([note.content], {type: "text/plain"});
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+    };
+
+    const btnEdit = document.createElement("button");
+    btnEdit.textContent = "Edit";
+    btnEdit.className = "note-btn";
+    btnEdit.onclick = () => {
+      document.getElementById("note-text").value = note.content;
+      document.getElementById("is-public").checked = note.public;
+    };
+
+    const btnDelete = document.createElement("button");
+    btnDelete.textContent = "Delete";
+    btnDelete.className = "note-btn";
+    btnDelete.onclick = () => {
+      if (confirm("Delete this note permanently?")) {
+        const index = users[currentUser].notes.findIndex(n => n.id === note.id);
+        if (index > -1) users[currentUser].notes.splice(index,1);
+        saveUsers(users);
+        renderNotes();
+      }
+    };
+
+    li.appendChild(btnCopy);
+    li.appendChild(btnRAW);
+    li.appendChild(btnDownload);
+    li.appendChild(btnEdit);
+    li.appendChild(btnDelete);
+    ul.appendChild(li);
+  });
 }
 
-.note-btn {
-  margin-left: 5px;
-  padding: 4px 8px;
-  font-size: 14px;
-  cursor: pointer;
-  border-radius: 6px;
-  border: 1px solid #3b82f6;
-  background: #3b82f6;
-  color: white;
-  transition: 0.2s;
-}
-
-.note-btn:hover {
-  background: #2563eb;
-  transform: translateY(-1px);
-}
-
-.note-btn:active {
-  transform: translateY(1px);
-}
+// ----- Auto login if session exists -----
+window.onload = () => {
+  const sessionUser = getSession();
+  if (sessionUser && getUsers()[sessionUser]) {
+    currentUser = sessionUser;
+    showNoteSection();
+  }
+};
