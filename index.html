@@ -10,15 +10,16 @@
 <div class="container">
   <h1>SaeMinh Note</h1>
 
+  <!-- AUTH SECTION -->
   <div id="auth-section">
     <h2>Register / Login</h2>
     <input type="text" id="username" placeholder="Username">
     <input type="password" id="password" placeholder="Password">
     <button class="clickable" onclick="registerUser()">Register</button>
     <button class="clickable" onclick="loginUser()">Login</button>
-    <p id="auth-msg"></p>
   </div>
 
+  <!-- NOTE SECTION -->
   <div id="note-section" style="display:none;">
     <h2>Welcome, <span id="current-user"></span></h2>
 
@@ -34,11 +35,13 @@
     <ul id="note-list"></ul>
   </div>
 
+  <!-- PUBLIC NOTES -->
   <div id="public-section">
     <h2>Public Notes</h2>
     <ul id="public-list"></ul>
   </div>
 </div>
+
 <script src="main.js"></script>
 </body>
 </html>
