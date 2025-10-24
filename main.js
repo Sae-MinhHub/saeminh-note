@@ -74,8 +74,9 @@ function saveNote() {
   if (!name || !content) return alert("Fill all fields!");
 
   let users = getUsers();
+  const id = genID();
   const note = {
-    id: genID(),
+    id,
     name,
     content,
     public: isPublic,
@@ -85,6 +86,15 @@ function saveNote() {
 
   users[currentUser].notes.push(note);
   saveUsers(users);
+
+  // Tải file về máy
+  const filename = isPublic ? `${currentUser}_${name}_${id}.txt` : `${currentUser}_${name}_${id}.hidden.txt`;
+  const blob = new Blob([content], {type:"text/plain"});
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+
   note-name.value = "";
   note-text.value = "";
   is-public.checked = false;
@@ -123,9 +133,9 @@ function renderPublicNotes() {
       .forEach(note => {
         const li = document.createElement("li");
         li.innerHTML = `<span><b>${note.name}</b> by ${u}</span>`;
-        const btn = createBtn("View", () => openNote(note));
-        ul.appendChild(li);
+        const btn = createBtn("View", () => openNote(note, true, u));
         li.appendChild(btn);
+        ul.appendChild(li);
       });
   });
 }
@@ -139,14 +149,23 @@ function createBtn(text, fn) {
   return b;
 }
 
-function openNote(note) {
+function openNote(note, publicView=false, username=null) {
   if (!note.public && note.owner !== currentUser) {
     alert("This note is private.");
     return;
   }
-  const blob = new Blob([note.content], { type: "text/plain" });
-  const url = URL.createObjectURL(blob);
-  window.open(url, "_blank");
+
+  if (publicView) {
+    // RAW link GitHub
+    const repo = "saeminh-note";
+    const url = `https://raw.githubusercontent.com/Sae-MinhHub/${repo}/main/raw/${username}/${note.owner}_${note.name}_${note.id}.txt`;
+    window.open(url, "_blank");
+  } else {
+    // Blob local
+    const blob = new Blob([note.content], {type: "text/plain"});
+    const url = URL.createObjectURL(blob);
+    window.open(url, "_blank");
+  }
 }
 
 function deleteNote(id) {
