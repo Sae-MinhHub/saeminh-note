@@ -18,10 +18,6 @@ function setSession(username) {
   localStorage.setItem("currentUser", username);
 }
 
-function clearSession() {
-  localStorage.removeItem("currentUser");
-}
-
 // ----- Register / Login -----
 function registerUser() {
   const username = document.getElementById("username").value.trim();
@@ -76,14 +72,18 @@ function genID() {
 
 // ----- Save note -----
 function saveNote() {
+  const noteName = document.getElementById("note-name").value.trim();
   const noteText = document.getElementById("note-text").value.trim();
   const isPublic = document.getElementById("is-public").checked;
-  if (!noteText) return alert("Note cannot be empty.");
+
+  if (!noteName) return alert("Please enter note name.");
+  if (!noteText) return alert("Note content cannot be empty.");
 
   let users = getUsers();
   const noteID = genID();
   const note = {
     id: noteID,
+    name: noteName,
     content: noteText,
     public: isPublic,
     hidden: !isPublic,
@@ -92,6 +92,7 @@ function saveNote() {
 
   users[currentUser].notes.push(note);
   saveUsers(users);
+  document.getElementById("note-name").value = "";
   document.getElementById("note-text").value = "";
   document.getElementById("is-public").checked = false;
   renderNotes();
@@ -107,7 +108,7 @@ function renderNotes() {
   notes.forEach(note => {
     const li = document.createElement("li");
     const text = document.createElement("span");
-    text.textContent = note.content.length > 50 ? note.content.slice(0,50)+"..." : note.content;
+    text.textContent = `${note.name}: ${note.content.length > 50 ? note.content.slice(0,50)+"..." : note.content}`;
     li.appendChild(text);
 
     // Buttons
@@ -121,7 +122,7 @@ function renderNotes() {
     btnRAW.className = "note-btn";
     btnRAW.onclick = () => {
       if (note.public) {
-        const rawLink = `https://raw.githubusercontent.com/Sae-MinhHub/saeminh-note/main/raw/${currentUser}/${note.id}.txt`;
+        const rawLink = `https://raw.githubusercontent.com/Sae-MinhHub/saeminh-note/main/raw/${currentUser}/${note.name}_${note.id}.txt`;
         window.open(rawLink, "_blank");
       } else {
         const rawWin = window.open("", "_blank");
@@ -133,7 +134,7 @@ function renderNotes() {
     btnDownload.textContent = "Download";
     btnDownload.className = "note-btn";
     btnDownload.onclick = () => {
-      const filename = note.hidden ? `${currentUser}_${note.id}.hidden.txt` : `${currentUser}_${note.id}.txt`;
+      const filename = note.hidden ? `${currentUser}_${note.name}_${note.id}.hidden.txt` : `${currentUser}_${note.name}_${note.id}.txt`;
       const blob = new Blob([note.content], {type: "text/plain"});
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
@@ -145,6 +146,7 @@ function renderNotes() {
     btnEdit.textContent = "Edit";
     btnEdit.className = "note-btn";
     btnEdit.onclick = () => {
+      document.getElementById("note-name").value = note.name;
       document.getElementById("note-text").value = note.content;
       document.getElementById("is-public").checked = note.public;
     };
