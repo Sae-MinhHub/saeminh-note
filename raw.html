@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Raw Note</title>
+<style>
+body { background:white; color:black; font-family: monospace; padding:20px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<pre id="raw-content"></pre>
+<script>
+let notes = JSON.parse(localStorage.getItem("notes")||"[]");
+let id = location.hash.substring(1);
+let note = notes.find(n=>n.id===id);
+document.getElementById("raw-content").textContent = note ? note.content : "Note not found!";
+</script>
+</body>
+</html>
