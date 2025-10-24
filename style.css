@@ -1,4 +1,3 @@
-/* Body & container */
 body {
   font-family: "Inter", sans-serif;
   background: #0f1724;
@@ -14,16 +13,15 @@ body {
   text-align: center;
 }
 
-/* Headings */
 h1 {
   color: #60a5fa;
   margin-bottom: 20px;
 }
+
 h2, h3 {
   margin-bottom: 15px;
 }
 
-/* Inputs & Textarea */
 input, textarea {
   display: block;
   width: 100%;
@@ -32,10 +30,9 @@ input, textarea {
   border: 2px solid #3b82f6;
   padding: 10px;
   font-size: 16px;
-  outline: none;
-  transition: 0.2s;
   background: #1e293b;
   color: #e2e8f0;
+  outline: none;
 }
 
 textarea {
@@ -43,42 +40,39 @@ textarea {
   resize: vertical;
 }
 
-/* Main buttons: Save / Register / Login */
 button.clickable {
   background: #3b82f6;
   color: white;
   font-weight: bold;
   cursor: pointer;
-  padding: 12px 20px; /* cao hơn, vừa rộng */
+  padding: 12px 20px;
   border-radius: 10px;
   font-size: 18px;
   transition: 0.2s;
 }
+
 button.clickable:hover {
   background: #2563eb;
   transform: translateY(-2px);
 }
+
 button.clickable:active {
   transform: translateY(1px);
 }
 
-/* Note options */
 .note-options {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
 }
-.note-options label {
-  font-size: 16px;
-}
 
-/* Note list */
 ul {
   list-style: none;
   padding: 0;
   text-align: left;
 }
+
 li {
   background: #1e293b;
   margin-bottom: 8px;
@@ -90,11 +84,10 @@ li {
   flex-wrap: wrap;
 }
 
-/* Note buttons */
 .note-btn {
   margin-left: 5px;
-  padding: 8px 12px; /* cao hơn, ít dài hơn */
-  font-size: 16px; 
+  padding: 8px 12px;
+  font-size: 16px;
   cursor: pointer;
   border-radius: 8px;
   border: 1px solid #3b82f6;
@@ -102,25 +95,8 @@ li {
   color: white;
   transition: 0.2s;
 }
+
 .note-btn:hover {
   background: #2563eb;
   transform: translateY(-1px);
-}
-.note-btn:active {
-  transform: translateY(1px);
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-  .note-options {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .note-btn {
-    margin: 5px 2px 2px 0;
-    width: 48%;
-  }
-  button.clickable {
-    width: 100%;
-  }
 }
