@@ -1,7 +1,6 @@
-// ----- User & Note Management -----
 let currentUser = null;
 
-// Load users from LocalStorage
+// ----- Users -----
 function getUsers() {
   return JSON.parse(localStorage.getItem("users") || "{}");
 }
@@ -10,7 +9,7 @@ function saveUsers(users) {
   localStorage.setItem("users", JSON.stringify(users));
 }
 
-// Register user
+// Register
 function registerUser() {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
@@ -27,12 +26,12 @@ function registerUser() {
     return;
   }
 
-  users[username] = { password: btoa(password), notes: [] }; // encode password
+  users[username] = { password: btoa(password), notes: [] };
   saveUsers(users);
   msg.textContent = "Registered successfully. You can login now.";
 }
 
-// Login user
+// Login
 function loginUser() {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
@@ -52,7 +51,7 @@ function loginUser() {
   renderNotes();
 }
 
-// Generate random note ID
+// Generate ID
 function genID() {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   return Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
@@ -74,7 +73,6 @@ function saveNote() {
     created: new Date().toISOString()
   };
 
-  // Create new version (do not overwrite old)
   users[currentUser].notes.push(note);
   saveUsers(users);
   document.getElementById("note-text").value = "";
@@ -82,7 +80,7 @@ function saveNote() {
   renderNotes();
 }
 
-// Render notes list
+// Render notes
 function renderNotes() {
   const ul = document.getElementById("note-list");
   ul.innerHTML = "";
@@ -109,6 +107,26 @@ function renderNotes() {
       rawWin.document.write("<pre>" + note.content.replace(/[&<>]/g, t => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[t])) + "</pre>");
     };
 
+    const btnDownload = document.createElement("button");
+    btnDownload.textContent = "Download";
+    btnDownload.className = "note-btn";
+    btnDownload.onclick = () => {
+      const filename = note.hidden ? `${currentUser}_${note.id}.hidden.txt` : `${currentUser}_${note.id}.txt`;
+      const blob = new Blob([note.content], {type: "text/plain"});
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+    };
+
+    const btnEdit = document.createElement("button");
+    btnEdit.textContent = "Edit";
+    btnEdit.className = "note-btn";
+    btnEdit.onclick = () => {
+      document.getElementById("note-text").value = note.content;
+      document.getElementById("is-public").checked = note.public;
+    };
+
     const btnDelete = document.createElement("button");
     btnDelete.textContent = "Delete";
     btnDelete.className = "note-btn";
@@ -123,6 +141,8 @@ function renderNotes() {
 
     li.appendChild(btnCopy);
     li.appendChild(btnRAW);
+    li.appendChild(btnDownload);
+    li.appendChild(btnEdit);
     li.appendChild(btnDelete);
     ul.appendChild(li);
   });
