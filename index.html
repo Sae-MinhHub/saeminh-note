@@ -7,34 +7,34 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>SaeMinh Note</h1>
+<div class="container">
+  <h1>SaeMinh Note</h1>
 
-    <div id="auth-section">
-      <h2>Register / Login</h2>
-      <input type="text" id="username" placeholder="Username">
-      <input type="password" id="password" placeholder="Password">
-      <button onclick="registerUser()">Register</button>
-      <button onclick="loginUser()">Login</button>
-      <p id="auth-msg"></p>
-    </div>
-
-    <div id="note-section" style="display:none;">
-      <h2>Welcome, <span id="current-user"></span></h2>
-
-      <textarea id="note-text" placeholder="Write your note here..."></textarea>
-
-      <div class="note-options">
-        <label>
-          <input type="checkbox" id="is-public"> Public
-        </label>
-        <button onclick="saveNote()">Save Note</button>
-      </div>
-
-      <h3>Your Notes</h3>
-      <ul id="note-list"></ul>
-    </div>
+  <div id="auth-section">
+    <h2>Register / Login</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="registerUser()">Register</button>
+    <button onclick="loginUser()">Login</button>
+    <p id="auth-msg"></p>
   </div>
+
+  <div id="note-section" style="display:none;">
+    <h2>Welcome, <span id="current-user"></span></h2>
+
+    <textarea id="note-text" placeholder="Write your note here..."></textarea>
+
+    <div class="note-options">
+      <label>
+        <input type="checkbox" id="is-public"> Public
+      </label>
+      <button onclick="saveNote()">Save Note</button>
+    </div>
+
+    <h3>Your Notes</h3>
+    <ul id="note-list"></ul>
+  </div>
+</div>
 
 <script src="main.js"></script>
 </body>
