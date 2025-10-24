@@ -3,27 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SaeMinh Note</title>
+<title>Sae Minh Note</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-  <h1>SaeMinh Note</h1>
+<header>
+  <h1>Sae Minh Note</h1>
+</header>
 
-  <input type="text" id="note-name" placeholder="Enter note name">
-  <textarea id="note-text" placeholder="Write your note here..."></textarea>
+<main>
+  <section class="create-note">
+    <input type="text" id="note-name" placeholder="Enter note title...">
+    <textarea id="note-text" placeholder="Write your note here..."></textarea>
+    <div class="options">
+      <label><input type="checkbox" id="is-public"> Public</label>
+      <button id="save-btn" class="btn">Save Note</button>
+    </div>
+  </section>
 
-  <div class="note-options">
-    <label><input type="checkbox" id="is-public"> Public</label>
-    <button class="clickable" id="save-btn">Save Note</button>
-  </div>
+  <section class="notes-section">
+    <h2>Your Notes</h2>
+    <ul id="note-list" class="note-list"></ul>
+  </section>
 
-  <h3>Your Notes</h3>
-  <ul id="note-list"></ul>
+  <section class="notes-section">
+    <h2>Public Notes</h2>
+    <ul id="public-list" class="note-list"></ul>
+  </section>
+</main>
 
-  <h3>Public Notes</h3>
-  <ul id="public-list"></ul>
-</div>
 <script src="main.js"></script>
 </body>
 </html>
